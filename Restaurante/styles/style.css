@@ -1,0 +1,16 @@
+:root {
+
+    --primary: #2e7d32;
+    --primary-dark: #1b5e20;
+    --primary-light: #4caf50;
+    --secondary: #e8f5e9;
+
+}
+
+tr{
+
+    width: 100%;
+}th{
+
+    padding: .8rem;
+}
