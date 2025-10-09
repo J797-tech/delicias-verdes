@@ -1,0 +1,330 @@
+/* ========================
+   Paleta verdosa - variables
+   ======================== */
+:root {
+  --verde-oscuro: #4a783c;
+  /* nav/acentos */
+  --verde-medio: #4a783c;
+  /* botones */
+  --verde-claro: #e4ffdc;
+  /* fondos */
+  --verde-suave: #f4f3f9;
+  /* tarjetas */
+  --gris-suave: #e16f6f;
+  --gris-texto: #1cb4f0;
+  --footer: #0c361f;
+
+  --shadow-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-medio: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --shadow-fuerte: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* ========================
+   Global
+   ======================== */
+body {
+  background: linear-gradient(180deg, var(--verde-claro) 0%, #ffffff 100%);
+  min-height: 100vh;
+  color: var(--gris-texto);
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  color: var(--verde-oscuro);
+  margin-bottom: .5rem;
+}
+
+a {
+  color: var(--verde-medio);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--verde-oscuro);
+}
+
+
+
+/* ========================
+   Sidebar
+   ======================== */
+.sidebar {
+  margin: 15px 0;
+  background: #fff;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  min-height: 100vh;
+  padding: 1rem 0;
+  box-shadow: var(--shadow-suave);
+}
+
+.category-btn {
+  font-size: 13px !important;
+  /* fuerza el tamaño */
+  padding: 12px 20px !important;
+  /* fuerza el espacio interno */
+  border-radius: 10px !important;
+}
+
+
+.category-btn {
+  display: block;
+  padding: .65rem 1rem;
+  border-left: 4px solid transparent;
+  transition: all 0.25s ease;
+  border-radius: 0 6px 6px 0;
+  font-weight: 500;
+  color: var(--gris-texto);
+}
+
+.category-btn:hover {
+  background: rgba(136, 134, 14, 0.08);
+}
+
+.category-btn.active {
+  border-left-color: var(--verde-medio);
+  background: linear-gradient(90deg, rgba(36, 122, 74, 0.12), transparent);
+  font-weight: 600;
+  color: var(--verde-oscuro);
+}
+
+
+/* ========================
+   Nuevo Sidebar
+   ======================== */
+/* Ajustar espacio del contenido principal por el navbar fijo */
+body {
+  padding-top: 70px;
+  /* Altura del navbar */
+}
+
+/* Aside fijo a la izquierda */
+aside {
+  position: fixed;
+  top: 75px;
+  /* la altura de tu navbar */
+  left: 0;
+  width: 250px;
+  height: calc(100% - 60px);
+  /* para que no tape el navbar */
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 15px;
+  overflow-y: auto;
+  /* scroll si el contenido es largo */
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+
+main {
+  margin-left: 250px;
+  /* el mismo ancho que el aside */
+  padding: 20px;
+}
+
+
+/* El contenido principal debe desplazarse para no quedar debajo del aside */
+.main-content {
+  margin-left: 16.666%;
+  /* equivalente a col-lg-2 (2 de 12 columnas) */
+  padding: 20px;
+}
+
+
+/* ========================
+   Tarjetas de producto
+   ======================== */
+.product-card {
+  border-radius: 16px;
+  box-shadow: var(--shadow-medio);
+  background: linear-gradient(180deg, #ffffff 0%, var(--verde-suave) 100%);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-fuerte);
+}
+
+.product-card img {
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.product-card .card-body {
+  padding: 1rem;
+}
+
+.badge-category {
+  background: rgba(36, 122, 74, 0.15);
+  color: var(--verde-oscuro);
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin-bottom: .5rem;
+}
+
+/* ========================
+   Botón flotante del carrito
+   ======================== */
+.cart-fab {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1100;
+  box-shadow: var(--shadow-fuerte);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--verde-oscuro);
+  color: white;
+  font-size: 1.4rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  cursor: pointer;
+}
+
+.cart-fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  background: var(--verde-medio);
+}
+
+/* ========================
+   Formularios y modales
+   ======================== */
+.form-section {
+  background: #fff;
+  padding: 1.25rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-suave);
+}
+
+.modal-content {
+  border-radius: 16px;
+  box-shadow: var(--shadow-medio);
+}
+
+/* Inputs */
+.form-control {
+  border-radius: 8px;
+  padding: .65rem .75rem;
+  border: 1px solid #ced4da;
+  transition: border-color .25s, box-shadow .25s;
+}
+
+.form-control:focus {
+  border-color: var(--verde-medio);
+  box-shadow: 0 0 0 0.2rem rgba(36, 122, 74, 0.25);
+  outline: none;
+}
+
+/* Botones principales */
+.btn {
+  border-radius: 8px;
+  padding: .6rem 1.1rem;
+  transition: all 0.25s ease;
+  font-weight: 500;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-suave);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: var(--verde-medio);
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--verde-oscuro);
+}
+
+/* ========================
+   Footer
+   ======================== */
+footer {
+  margin-top: 2rem;
+  padding: 1.5rem 0;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  background: var(--verde-claro);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ========================
+   Reservation Modal Specific Styles
+   ======================== */
+.reserve-modal .modal-content {
+  border-radius: 20px;
+  box-shadow: var(--shadow-fuerte);
+  background: linear-gradient(135deg, #ffffff 0%, var(--verde-suave) 100%);
+}
+
+.reserve-modal .modal-header {
+  border-radius: 20px 20px 0 0;
+  border-bottom: none;
+}
+
+.reserve-modal .modal-body {
+  padding: 2rem;
+}
+
+.reserve-modal .form-label {
+  font-weight: 600;
+  color: var(--verde-oscuro);
+}
+
+.reserve-modal .input-group-text {
+  background: var(--verde-claro);
+  border-color: var(--verde-medio);
+  color: var(--verde-oscuro);
+}
+
+.reserve-modal .form-control:focus {
+  border-color: var(--verde-medio);
+  box-shadow: 0 0 0 0.25rem rgba(74, 120, 60, 0.15);
+}
+
+.reserve-modal .btn-success {
+  background: var(--verde-medio);
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.reserve-modal .btn-success:hover {
+  background: var(--verde-oscuro);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medio);
+}
+
+/* ========================
+   Responsive
+   ======================== */

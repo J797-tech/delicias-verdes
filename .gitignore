@@ -1,0 +1,24 @@
+# Windows
+desktop.ini
+Thumbs.db
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Node modules (si aplica)
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Archivos de sistema
+*.swp
+*.swo

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Historial de Pedidos - Delicias Verdes</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg fixed-top" style="background-color: rgb(14, 123, 22)">
+    <div class="container-fluid text-white">
+      <a class="navbar-brand d-flex align-items-center text-white" href="index.html">
+        <i class="bi bi-basket3-fill me-2" style="font-size: 1.4rem"></i>
+        <div>
+          <div style="font-weight: 700">Delicias Verdes</div>
+          <small style="opacity: 0.9">Repostería • Heladería • Panadería • Gourmet</small>
+        </div>
+      </a>
+      <div class="d-flex align-items-center">
+        <a href="index.html" class="btn btn-outline-light btn-sm">Volver al Inicio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="container-fluid" style="padding-top: 80px;">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card shadow-lg">
+          <div class="card-header bg-success text-white text-center">
+            <h4 class="mb-0">
+              <i class="bi bi-receipt me-2"></i>Historial de Pedidos
+            </h4>
+          </div>
+          <div class="card-body">
+            <div id="ordersContainer">
+              <!-- Pedidos generados por JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Datos de ejemplo de pedidos (simulados)
+    const SAMPLE_ORDERS = [
+      {
+        id: 1001,
+        date: "2024-01-15",
+        time: "14:30",
+        status: "Completado",
+        total: 25.75,
+        pickupTime: "15:00",
+        pickupLocation: "Sucursal Centro",
+        items: [
+          { id: 1, title: "Tarta de fresa (porción)", qty: 2, price: 7.5 },
+          { id: 2, title: "Helado artesano (500ml)", qty: 1, price: 6.0 },
+          { id: 9, title: "Café gourmet (para llevar)", qty: 1, price: 2.8 }
+        ]
+      },
+      {
+        id: 1002,
+        date: "2024-01-10",
+        time: "12:15",
+        status: "Completado",
+        total: 18.25,
+        pickupTime: "12:45",
+        pickupLocation: "Sucursal Centro",
+        items: [
+          { id: 3, title: "Pan campesino (unidad)", qty: 3, price: 2.25 },
+          { id: 5, title: "Macarons (6 unidades)", qty: 1, price: 9.0 },
+          { id: 7, title: "Croissant almendrado", qty: 1, price: 3.5 }
+        ]
+      },
+      {
+        id: 1003,
+        date: "2024-01-08",
+        time: "18:45",
+        status: "Cancelado",
+        total: 12.0,
+        pickupTime: "19:15",
+        pickupLocation: "Sucursal Norte",
+        items: [
+          { id: 4, title: "Box ejecutivo (almuerzo)", qty: 1, price: 12.0 }
+        ]
+      }
+    ];
+
+    const currency = (v) => "$" + Number(v).toFixed(2);
+
+    function renderOrders() {
+      const container = document.getElementById("ordersContainer");
+      container.innerHTML = "";
+
+      if (SAMPLE_ORDERS.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">No tienes pedidos registrados.</div>';
+        return;
+      }
+
+      SAMPLE_ORDERS.forEach(order => {
+        const statusClass = order.status === "Completado" ? "success" : order.status === "Cancelado" ? "danger" : "warning";
+        const card = document.createElement("div");
+        card.className = "card mb-3";
+        card.innerHTML = `
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span><strong>Pedido #${order.id}</strong> - ${order.date} ${order.time}</span>
+            <span class="badge bg-${statusClass}">${order.status}</span>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-8">
+                <h6>Items:</h6>
+                <ul class="list-group list-group-flush">
+                  ${order.items.map(item => `
+                    <li class="list-group-item d-flex justify-content-between">
+                      <span>${item.title} x ${item.qty}</span>
+                      <span>${currency(item.price * item.qty)}</span>
+                    </li>
+                  `).join('')}
+                </ul>
+              </div>
+              <div class="col-md-4">
+                <p><strong>Total:</strong> ${currency(order.total)}</p>
+                <p><strong>Recogida:</strong> ${order.pickupTime} en ${order.pickupLocation}</p>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Verificar autenticación
+    document.addEventListener("DOMContentLoaded", () => {
+      const role = localStorage.getItem("currentUserRole");
+      if (role !== "cliente") {
+        alert("Acceso denegado. Solo para clientes.");
+        window.location.href = "index.html";
+        return;
+      }
+      renderOrders();
+    });
+  </script>
+</body>
+</html>

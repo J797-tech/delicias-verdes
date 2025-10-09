@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestión de Platos - Delicias Verdes</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg fixed-top" style="background-color: var(--verde-oscuro);">
+    <div class="container-fluid text-white">
+      <a class="navbar-brand d-flex align-items-center text-white" href="/">
+        <i class="bi bi-basket3-fill me-2" style="font-size: 1.4rem"></i>
+        <div>
+          <div style="font-weight: 700">Delicias Verdes</div>
+          <small style="opacity: 0.9">Gestión de Platos</small>
+        </div>
+      </a>
+      <div>
+      <button id="logoutBtn" class="btn btn-outline-light btn-sm" style="display: none;" onclick="logout()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mt-5 pt-5">
+    <h2 class="mb-4">Gestión de Platos</h2>
+
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAddEdit">
+        <i class="bi bi-plus-lg"></i> Nuevo Plato
+      </button>
+    </div>
+
+    <div id="categoryManagement" class="mb-3 d-flex gap-2 align-items-center" style="display:none;">
+      <input type="text" id="newCategoryInput" class="form-control w-auto" placeholder="Nueva categoría" />
+      <button id="btnAddCategory" class="btn btn-primary">Agregar Categoría</button>
+    </div>
+
+    <div id="productsTableContainer" class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Título</th>
+            <th>Categoría</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th id="actionsHeader">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="productsTableBody">
+          <!-- Productos listados aquí -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Modal para agregar/editar plato -->
+    <div class="modal fade" id="modalAddEdit" tabindex="-1" aria-labelledby="modalAddEditLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <form id="formAddEdit">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalAddEditLabel">Nuevo Plato</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="productId" />
+              <div class="mb-3">
+                <label for="productTitle" class="form-label">Título</label>
+                <input type="text" class="form-control" id="productTitle" required />
+              </div>
+              <div class="mb-3">
+                <label for="productCategory" class="form-label">Categoría</label>
+                <select id="productCategory" class="form-select" required></select>
+              </div>
+              <div class="mb-3">
+                <label for="productPrice" class="form-label">Precio</label>
+                <input type="number" step="0.01" min="0" class="form-control" id="productPrice" required />
+              </div>
+              <div class="mb-3">
+                <label for="productDesc" class="form-label">Descripción</label>
+                <textarea class="form-control" id="productDesc" rows="3" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="productImg" class="form-label">URL Imagen</label>
+                <input type="url" class="form-control" id="productImg" required />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-success">Guardar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="login.js"></script>
+  <script>
+    // Variables de estado
+    let PRODUCTS = [
+      {
+        id: 1,
+        title: "Tarta de fresa (porción)",
+        category: "Repostería",
+        price: 7.5,
+        desc: "Porción de tarta con crema y fresas",
+        img: "https://th.bing.com/th/id/OIP.GKWvbsfRvoTGCWYFO9FK7wHaEK?w=322&h=181&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+      },
+      {
+        id: 2,
+        title: "Helado artesano (500ml)",
+        category: "Heladería",
+        price: 6.0,
+        desc: "Sabor vainilla premium",
+        img: "https://th.bing.com/th/id/OIP.rFc1KpEQyuB5eLQQtkycRwHaE7?w=246&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+      },
+      {
+        id: 3,
+        title: "Pan campesino (unidad)",
+        category: "Panadería",
+        price: 2.25,
+        desc: "Pan recién horneado",
+        img: "https://th.bing.com/th/id/OIP.TrdecwYPbp3jSQtflsMq7QHaE8?w=276&h=184&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+      },
+      {
+        id: 4,
+        title: "Box ejecutivo (almuerzo)",
+        category: "Ejecutivos",
+        price: 12.0,
+        desc: "Plato gourmet para llevar",
+        img: "https://sapiencia.gov.co/wp-content/uploads/2020/08/almuerzos-ejecutivo.jpg",
+      },
+      {
+        id: 5,
+        title: "Macarons (6 unidades)",
+        category: "Repostería",
+        price: 9.0,
+        desc: "Surtido de macarons",
+        img: "https://lovefoodfeed.com/wp-content/uploads/2023/01/Macarons-px-1200-01-1.jpg",
+      },
+      {
+        id: 6,
+        title: "Tarta de queso pequeña",
+        category: "Gourmet",
+        price: 18.0,
+        desc: "Cheesecake estilo artesanal",
+        img: "https://www.hola.com/horizon/original_aspect_ratio/91ead5f5ccb6-interior-tartas-age-z.jpg",
+      },
+      {
+        id: 7,
+        title: "Croissant almendrado",
+        category: "Panadería",
+        price: 3.5,
+        desc: "Hojaldre con relleno de almendra",
+        img: "https://img-global.cpcdn.com/recipes/0c72628a8c60375c/680x482cq70/hojaldre-relleno-de-chocolate-y-cubierto-de-almendra-y-azucar-foto-principal.jpg",
+      },
+      {
+        id: 8,
+        title: "Sorbete de limón (vaso)",
+        category: "Heladería",
+        price: 4.0,
+        desc: "Ligero y refrescante",
+        img: "https://queapetito.com/wp-content/uploads/2018/07/Sorbete-de-Lim%C3%B3n.jpg",
+      },
+      {
+        id: 9,
+        title: "Café gourmet (para llevar)",
+        category: "Gourmet",
+        price: 2.8,
+        desc: "Café de origen, molido al momento",
+        img: "https://s1.eestatic.com/2022/03/14/actualidad/657194829_222676211_1706x960.jpg",
+      },
+    ];
+
+    let categories = [...new Set(PRODUCTS.map(p => p.category))];
+
+    let currentRole = null; // Se setea desde localStorage
+
+    // Elementos DOM
+    const productsTableBody = document.getElementById("productsTableBody");
+    const productCategorySelect = document.getElementById("productCategory");
+    const categoryManagement = document.getElementById("categoryManagement");
+    const newCategoryInput = document.getElementById("newCategoryInput");
+    const btnAddCategory = document.getElementById("btnAddCategory");
+    const actionsHeader = document.getElementById("actionsHeader");
+
+    // Inicializar categorías en select
+    function renderCategoryOptions() {
+      productCategorySelect.innerHTML = "";
+      categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        productCategorySelect.appendChild(option);
+      });
+    }
+
+    // Renderizar tabla de productos
+    function renderProducts() {
+      productsTableBody.innerHTML = "";
+      PRODUCTS.forEach(product => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td><img src="${product.img}" alt="${product.title}" style="height: 60px; object-fit: cover; border-radius: 8px;"></td>
+          <td>${product.title}</td>
+          <td>${product.category}</td>
+          <td>${product.desc}</td>
+          <td>${product.price.toFixed(2)}</td>
+          <td class="actions-cell"></td>
+        `;
+
+        const actionsCell = tr.querySelector(".actions-cell");
+
+        if (currentRole === "administrador") {
+          actionsCell.innerHTML = `
+            <button class="btn btn-sm btn-primary me-1" onclick="editProduct(${product.id})"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})"><i class="bi bi-trash"></i></button>
+          `;
+        } else if (currentRole === "cocinero") {
+          actionsCell.innerHTML = `
+            <button class="btn btn-sm btn-primary" onclick="editProductDescription(${product.id})"><i class="bi bi-pencil"></i> Editar descripción</button>
+          `;
+        } else {
+          actionsCell.textContent = "No autorizado";
+        }
+
+        productsTableBody.appendChild(tr);
+      });
+
+      // Mostrar u ocultar columna de acciones
+      actionsHeader.style.display = (currentRole === "administrador" || currentRole === "cocinero") ? "table-cell" : "none";
+      document.querySelectorAll(".actions-cell").forEach(cell => {
+        cell.style.display = (currentRole === "administrador" || currentRole === "cocinero") ? "table-cell" : "none";
+      });
+
+      // Mostrar u ocultar gestión de categorías
+      categoryManagement.style.display = currentRole === "administrador" ? "flex" : "none";
+    }
+
+
+
+    // Agregar categoría
+    btnAddCategory.addEventListener("click", () => {
+      const newCat = newCategoryInput.value.trim();
+      if (newCat && !categories.includes(newCat)) {
+        categories.push(newCat);
+        renderCategoryOptions();
+        renderProducts();
+        newCategoryInput.value = "";
+      }
+    });
+
+    // Editar producto (abrir modal con datos)
+    function editProduct(id) {
+      const product = PRODUCTS.find(p => p.id === id);
+      if (!product) return;
+      openModalWithProduct(product);
+    }
+
+    // Editar solo descripción (para cocinero)
+    function editProductDescription(id) {
+      const product = PRODUCTS.find(p => p.id === id);
+      if (!product) return;
+      openModalWithProduct(product, true);
+    }
+
+    // Eliminar producto
+    function deleteProduct(id) {
+      if (!confirm("¿Está seguro de eliminar este plato?")) return;
+      PRODUCTS = PRODUCTS.filter(p => p.id !== id);
+      renderProducts();
+    }
+
+    // Abrir modal para agregar o editar producto
+    function openModalWithProduct(product = null, descriptionOnly = false) {
+      const modal = new bootstrap.Modal(document.getElementById("modalAddEdit"));
+      const form = document.getElementById("formAddEdit");
+      const modalTitle = document.getElementById("modalAddEditLabel");
+
+      if (product) {
+        modalTitle.textContent = descriptionOnly ? "Editar Descripción" : "Editar Plato";
+        document.getElementById("productId").value = product.id;
+        document.getElementById("productTitle").value = product.title;
+        document.getElementById("productCategory").value = product.category;
+        document.getElementById("productPrice").value = product.price;
+        document.getElementById("productDesc").value = product.desc;
+        document.getElementById("productImg").value = product.img;
+
+        if (descriptionOnly) {
+          document.getElementById("productTitle").disabled = true;
+          document.getElementById("productCategory").disabled = true;
+          document.getElementById("productPrice").disabled = true;
+          document.getElementById("productImg").disabled = true;
+        } else {
+          document.getElementById("productTitle").disabled = false;
+          document.getElementById("productCategory").disabled = false;
+          document.getElementById("productPrice").disabled = false;
+          document.getElementById("productImg").disabled = false;
+        }
+      } else {
+        modalTitle.textContent = "Nuevo Plato";
+        form.reset();
+        document.getElementById("productId").value = "";
+        document.getElementById("productTitle").disabled = false;
+        document.getElementById("productCategory").disabled = false;
+        document.getElementById("productPrice").disabled = false;
+        document.getElementById("productImg").disabled = false;
+      }
+
+      modal.show();
+    }
+
+    // Guardar producto (nuevo o editado)
+    document.getElementById("formAddEdit").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const id = document.getElementById("productId").value;
+      const title = document.getElementById("productTitle").value.trim();
+      const category = document.getElementById("productCategory").value;
+      const price = parseFloat(document.getElementById("productPrice").value);
+      const desc = document.getElementById("productDesc").value.trim();
+      const img = document.getElementById("productImg").value.trim();
+
+      if (!title || !category || isNaN(price) || !desc || !img) {
+        alert("Por favor, complete todos los campos correctamente.");
+        return;
+      }
+
+      if (id) {
+        // Editar producto existente
+        const product = PRODUCTS.find(p => p.id == id);
+        if (product) {
+          product.title = title;
+          product.category = category;
+          product.price = price;
+          product.desc = desc;
+          product.img = img;
+        }
+      } else {
+        // Agregar nuevo producto
+        const newId = PRODUCTS.length ? Math.max(...PRODUCTS.map(p => p.id)) + 1 : 1;
+        PRODUCTS.push({ id: newId, title, category, price, desc, img });
+        if (!categories.includes(category)) {
+          categories.push(category);
+          renderCategoryOptions();
+        }
+      }
+
+      renderProducts();
+      bootstrap.Modal.getInstance(document.getElementById("modalAddEdit")).hide();
+    });
+
+    // Inicialización
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedRole = localStorage.getItem("currentUserRole");
+      if (!savedRole || (savedRole !== "administrador" && savedRole !== "cocinero")) {
+        alert("Acceso denegado. Requiere rol administrador o cocinero");
+        logout();
+        return;
+      }
+      currentRole = savedRole;
+      renderCategoryOptions();
+      renderProducts();
+    });
+
+
+  </script>
+</body>
+</html>

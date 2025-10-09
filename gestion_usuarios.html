@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestión de Usuarios - Delicias Verdes</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      background: #e4ffdc;
+      font-family: Arial, sans-serif;
+      padding-top: 70px;
+    }
+    header {
+      background-color: #4a783c;
+      color: white;
+      padding: 1rem 2rem;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1030;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    h1 {
+      margin-bottom: 1rem;
+      color: #008000;
+    }
+    table {
+      width: 100%;
+    }
+    th, td {
+      vertical-align: middle !important;
+    }
+    .btn-role {
+      margin-left: 1rem;
+    }
+    .filter-section {
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-section select,
+    .filter-section input {
+      max-width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h2>Delicias Verdes - Gestión de Usuarios</h2>
+    </div>
+  <div>
+    <button id="loginBtn" class="btn btn-outline-light btn-role" data-bs-toggle="modal" data-bs-target="#loginModal" data-redirect="gestion_usuarios.html">Iniciar sesión</button>
+    <button id="logoutBtn" class="btn btn-outline-light btn-role" style="display: none;" onclick="logout()">Cerrar sesión</button>
+  </div>
+  </header>
+  <main>
+    <h1>Usuarios Registrados</h1>
+
+    <section class="filter-section">
+      <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Buscar por nombre o correo" />
+      <select id="filterRole" class="form-select form-select-sm">
+        <option value="todos">Todos los roles</option>
+        <option value="cliente">Cliente</option>
+        <option value="mesero">Mesero</option>
+        <option value="cocinero">Cocinero</option>
+        <option value="administrador">Administrador</option>
+      </select>
+      <button id="addUserBtn" class="btn btn-success btn-sm">Agregar Usuario</button>
+    </section>
+
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo Electrónico</th>
+          <th>Rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="usersTableBody">
+        <!-- Usuarios generados por JS -->
+      </tbody>
+    </table>
+
+    <!-- Modal para agregar/editar usuario -->
+    <div class="modal fade" id="userModal" tabindex="-1">
+      <div class="modal-dialog">
+        <form id="userForm" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="userModalTitle">Agregar Usuario</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="userId" />
+            <div class="mb-3">
+              <label for="userName" class="form-label">Nombre</label>
+              <input type="text" id="userName" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="userEmail" class="form-label">Correo Electrónico</label>
+              <input type="email" id="userEmail" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="userPassword" class="form-label">Contraseña</label>
+              <input type="password" id="userPassword" class="form-control" />
+              <small class="form-text text-muted">Dejar vacío para no cambiar</small>
+            </div>
+            <div class="mb-3">
+              <label for="userRole" class="form-label">Rol</label>
+              <select id="userRole" class="form-select" required>
+                <option value="cliente">Cliente</option>
+                <option value="mesero">Mesero</option>
+                <option value="cocinero">Cocinero</option>
+                <option value="administrador">Administrador</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="login.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- MODAL: LOGIN (simulado) -->
+  <div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Iniciar sesión</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form id="loginForm">
+            <div class="mb-2">
+              <label class="form-label">Correo electrónico</label>
+              <input
+                id="loginEmail"
+                type="email"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Contraseña</label>
+              <input
+                id="loginPassword"
+                type="password"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="d-grid">
+              <button
+                class="btn"
+                style="background: var(--verde-medio); color: white"
+              >
+                Entrar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script>
+    // Evitar redeclaración de USERS
+    if (!window.USERS) {
+      let storedUsers = JSON.parse(localStorage.getItem("USERS"));
+      window.USERS = storedUsers || [
+        { id: 1, nombre: "Juan Pérez", email: "juan@deliciasverdes.com", rol: "cliente" },
+        { id: 2, nombre: "María Gómez", email: "maria@deliciasverdes.com", rol: "mesero" },
+        { id: 3, nombre: "Carlos Ruiz", email: "carlos@deliciasverdes.com", rol: "cocinero" },
+        { id: 4, nombre: "Ana Martínez", email: "ana@deliciasverdes.com", rol: "administrador" }
+      ];
+    }
+
+    let editingUserId = null;
+
+    const usersTableBody = document.getElementById("usersTableBody");
+    const searchInput = document.getElementById("searchInput");
+    const filterRole = document.getElementById("filterRole");
+    const addUserBtn = document.getElementById("addUserBtn");
+    const userModal = new bootstrap.Modal(document.getElementById("userModal"));
+    const userForm = document.getElementById("userForm");
+    const userModalTitle = document.getElementById("userModalTitle");
+    const userIdInput = document.getElementById("userId");
+    const userNameInput = document.getElementById("userName");
+    const userEmailInput = document.getElementById("userEmail");
+    const userPasswordInput = document.getElementById("userPassword");
+    const userRoleSelect = document.getElementById("userRole");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function saveUsers() {
+      localStorage.setItem("USERS", JSON.stringify(window.USERS));
+    }
+
+    function renderUsers() {
+      usersTableBody.innerHTML = "";
+      const search = searchInput.value.toLowerCase();
+      const roleFilter = filterRole.value;
+
+      window.USERS.filter(user => {
+        const matchesSearch = user.nombre.toLowerCase().includes(search) || user.email.toLowerCase().includes(search);
+        const matchesRole = roleFilter === "todos" || user.rol === roleFilter;
+        return matchesSearch && matchesRole;
+      }).forEach(user => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${user.nombre}</td>
+          <td>${user.email}</td>
+          <td>${user.rol}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick="editUser(${user.id})">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Eliminar</button>
+          </td>
+        `;
+        usersTableBody.appendChild(tr);
+      });
+    }
+
+    function editUser(id) {
+      const user = window.USERS.find(u => u.id === id);
+      if (!user) return;
+      editingUserId = id;
+      userModalTitle.textContent = "Editar Usuario";
+      userIdInput.value = user.id;
+      userNameInput.value = user.nombre;
+      userEmailInput.value = user.email;
+      userPasswordInput.value = "";
+      userRoleSelect.value = user.rol;
+      userModal.show();
+    }
+
+    function deleteUser(id) {
+      if (confirm("¿Estás seguro de eliminar este usuario?")) {
+        window.USERS = window.USERS.filter(u => u.id !== id);
+        saveUsers();
+        renderUsers();
+      }
+    }
+
+    addUserBtn.addEventListener("click", () => {
+      editingUserId = null;
+      userModalTitle.textContent = "Agregar Usuario";
+      userForm.reset();
+      userModal.show();
+    });
+
+    userForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nombre = userNameInput.value.trim();
+      const email = userEmailInput.value.trim();
+      const password = userPasswordInput.value;
+      const rol = userRoleSelect.value;
+
+      if (!nombre || !email || !rol) {
+        alert("Por favor, completa todos los campos requeridos.");
+        return;
+      }
+
+      if (editingUserId) {
+        // Editar usuario existente
+        const user = window.USERS.find(u => u.id === editingUserId);
+        if (user) {
+          user.nombre = nombre;
+          user.email = email;
+          if (password) {
+            // Aquí se actualizaría la contraseña (simulado)
+          }
+          user.rol = rol;
+        }
+      } else {
+        // Agregar nuevo usuario
+        const newId = window.USERS.length ? Math.max(...window.USERS.map(u => u.id)) + 1 : 1;
+        window.USERS.push({ id: newId, nombre, email, rol });
+      }
+
+      saveUsers();
+      userModal.hide();
+      renderUsers();
+    });
+
+    searchInput.addEventListener("input", renderUsers);
+    filterRole.addEventListener("change", renderUsers);
+
+    // Inicializar
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!checkAuth('administrador')) {
+        return;
+      }
+      renderUsers();
+    });
+  </script>
+</body>
+</html>
