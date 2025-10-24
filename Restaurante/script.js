@@ -123,6 +123,7 @@
 
       // Variables de estado
       let cart = JSON.parse(localStorage.getItem("dv_cart") || "[]");
+      let favorites = JSON.parse(localStorage.getItem("dv_favorites") || "[]");
       let categories = [];
       let filteredProducts = PRODUCTS.slice();
 
@@ -131,6 +132,10 @@
 
       function saveCart() {
         localStorage.setItem("dv_cart", JSON.stringify(cart));
+      }
+
+      function saveFavorites() {
+        localStorage.setItem("dv_favorites", JSON.stringify(favorites));
       }
 
       function updateCartCount() {
@@ -191,6 +196,7 @@
         }
 
         filteredProducts.forEach((p) => {
+          const isFavorite = favorites.includes(p.id);
           const col = document.createElement("div");
           col.className = "col-sm-6 col-md-3";
 
@@ -198,7 +204,12 @@
   <div class="p-3 product-card h-100 d-flex flex-column">
     <div class="d-flex justify-content-between align-items-start mb-2">
       <span class="badge-category">${p.category}</span>
-      <small class="text-muted">${currency(p.price)}</small>
+      <div class="d-flex align-items-center gap-2">
+        <small class="text-muted">${currency(p.price)}</small>
+        <button class="btn btn-sm favorite-btn" data-id="${p.id}" onclick="toggleFavorite(${p.id})">
+          <i class="bi ${isFavorite ? 'bi-heart-fill text-danger' : 'bi-heart'}"></i>
+        </button>
+      </div>
     </div>
     <div class="mb-3" style="flex:1">
       <!-- Imagen del producto -->
@@ -466,6 +477,61 @@ if (reserveForm) {
   modal.show();
 }
 
+      /* ------------------ Favoritos ------------------ */
+      function toggleFavorite(productId) {
+        const index = favorites.indexOf(productId);
+        if (index > -1) {
+          favorites.splice(index, 1);
+        } else {
+          favorites.push(productId);
+        }
+        saveFavorites();
+        renderProducts();
+        renderFavorites();
+      }
+
+      function renderFavorites() {
+        const grid = document.getElementById("favoritesGrid");
+        if (!grid) return;
+
+        grid.innerHTML = "";
+
+        const favoriteProducts = PRODUCTS.filter(p => favorites.includes(p.id));
+
+        if (favoriteProducts.length === 0) {
+          grid.innerHTML = '<div class="col-12"><div class="alert alert-info">No tienes productos favoritos aún.</div></div>';
+          return;
+        }
+
+        favoriteProducts.forEach((p) => {
+          const isFavorite = favorites.includes(p.id);
+          const col = document.createElement("div");
+          col.className = "col-sm-6 col-md-3";
+
+          col.innerHTML = `
+  <div class="p-3 product-card h-100 d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-start mb-2">
+      <span class="badge-category">${p.category}</span>
+      <button class="btn btn-sm favorite-btn" data-id="${p.id}" onclick="toggleFavorite(${p.id})">
+        <i class="bi ${isFavorite ? 'bi-heart-fill text-danger' : 'bi-heart'}"></i>
+      </button>
+    </div>
+    <div class="mb-3" style="flex:1">
+      <!-- Imagen del producto -->
+      <img src="${p.img}" alt="${p.title}" class="img-fluid rounded" style="height:200px; object-fit:cover; width:100%">
+      <p class="mt-2 mb-0 text-muted" style="font-size:0.9rem">${p.desc}</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm w-100" data-id="${p.id}" onclick="addToCart(${p.id})" style="background:var(--verde-medio); color:white">Agregar</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="showQuick(${p.id})">Detalles</button>
+    </div>
+  </div>
+`;
+
+          grid.appendChild(col);
+        });
+      }
+
 
 
       /* ------------------ Mobile Menu Toggle ------------------ */
@@ -523,6 +589,15 @@ if (reserveForm) {
         if (document.getElementById('resDatetime')) {
           document.getElementById('resDatetime').min = new Date().toISOString().slice(0, 16);
         }
+
+        // Listen for localStorage changes to update UI across tabs
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'dv_favorites') {
+            favorites = JSON.parse(e.newValue || "[]");
+            renderProducts();
+            renderFavorites();
+          }
+        });
       }
 
       // Hacer disponible en el scope global algunas funciones para uso en handlers inline
@@ -530,5 +605,7 @@ if (reserveForm) {
       window.changeQty = changeQty;
       window.removeFromCart = removeFromCart;
       window.showQuick = showQuick;
+      window.toggleFavorite = toggleFavorite;
+      window.renderFavorites = renderFavorites;
 
       init();
