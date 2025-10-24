@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+
+    <link rel="stylesheet" href="style.css">
+    <title>Prueba css</title>
+    <!-- Bootstrap CSS (CDN) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+<!-- NAVBAR -->
+<nav
+  class="navbar navbar-expand-lg fixed-top"
+  style="background-color: rgb(14, 123, 22)"
+>
+  <div class="container-fluid text-white">
+    <a class="navbar-brand d-flex align-items-center text-white" href="#">
+      <i class="bi bi-basket3-fill me-2" style="font-size: 1.4rem"></i>
+      <div>
+        <div style="font-weight: 700">Delicias Verdes</div>
+        <small style="opacity: 0.9"
+          >Repostería • Heladería • Panadería • Gourmet</small
+        >
+      </div>
+    </a>
+
+      <div class="d-flex align-items-center">
+        <button
+          id="loginBtn"
+          class="btn btn-light btn-sm me-2"
+          data-bs-toggle="modal"
+          data-bs-target="#loginModal"
+        >
+          Iniciar sesión
+        </button>
+        <button
+          id="logoutBtn"
+          class="btn btn-outline-light btn-sm me-2"
+          style="display: none;"
+          onclick="logout()"
+        >
+          Cerrar sesión
+        </button>
+        <a href="historial_pedidos.html" id="orderHistoryLink" class="btn btn-outline-light btn-sm me-2" style="display:none;">
+          Mis pedidos
+        </a>
+        <a href="favoritos.html" id="favoritesLink" class="btn btn-outline-light btn-sm me-2" style="display:none;">
+          Mis favoritos
+        </a>
+        <button
+          class="btn btn-outline-light btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#reserveModal"
+        >
+          Reservar mesa
+        </button>
+        <a href="contactanos.html" class="btn btn-outline-light btn-sm ms-2">Contáctanos</a>
+    </div>
+  </div>
+</nav>
+<script>
+  // Mostrar enlaces solo para clientes logueados
+  document.addEventListener("DOMContentLoaded", () => {
+    const role = localStorage.getItem("currentUserRole");
+    const orderHistoryLink = document.getElementById("orderHistoryLink");
+    const favoritesLink = document.getElementById("favoritesLink");
+    if (role === "cliente") {
+      if (orderHistoryLink) orderHistoryLink.style.display = "inline-block";
+      if (favoritesLink) favoritesLink.style.display = "inline-block";
+    }
+  });
+</script>
+
+<!-- SIDEBAR IZQUIERDA -->
+<aside class="sidebar">
+  <div class="px-2">
+    <h5 class="mb-3">Categorías</h5>
+    <div id="categoriaList" class="d-grid gap-2">
+      <!-- Botones generados por JS -->
+    </div>
+
+    <hr />
+    <div class="mb-3">
+      <h6>Buscar</h6>
+      <input
+        id="searchInput"
+        class="form-control form-control-sm"
+        placeholder="Buscar producto..."
+      />
+    </div>
+
+    <div class="mb-3">
+      <h6>Filtrar por precio</h6>
+      <div class="d-flex gap-2">
+        <input
+          id="minPrice"
+          type="number"
+          class="form-control form-control-sm"
+          placeholder="Mín"
+        />
+        <input
+          id="maxPrice"
+          type="number"
+          class="form-control form-control-sm"
+          placeholder="Máx"
+        />
+      </div>
+      <button
+        id="applyPrice"
+        class="btn btn-sm mt-2"
+        style="background: var(--verde-medio); color: white"
+      >
+        Aplicar
+      </button>
+    </div>
+
+    <hr />
+
+  </div>
+</aside>
+
+<!-- ZONA PRINCIPAL -->
+<main>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Productos</h3>
+
+    <div>
+      <select id="sortSelect" class="form-select form-select-sm">
+        <option value="default">Orden por: Relevancia</option>
+        <option value="price-asc">Precio: menor a mayor</option>
+        <option value="price-desc">Precio: mayor a menor</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Grid de productos -->
+  <div id="productsGrid" class="row g-3">
+    <!-- Productos generados por JS -->
+  </div>
+
+  <footer>
+    <small
+      >Diseñado para demostración. Listo para conectar a base de datos/
+      backend.</small
+    >
+  </footer>
+</main>
+      </div>
+    </div>
+
+    <!-- BOTÓN FLOTANTE CARRITO -->
+    <button
+      class="btn cart-fab btn-lg rounded-circle text-white"
+      style="background: var(--verde-oscuro)"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#cartOffcanvas"
+    >
+      <i class="bi bi-cart-check-fill"></i>
+      <span id="cartCount" class="badge bg-light text-dark ms-1">0</span>
+    </button>
+
+    <!-- OFFCANVAS: CARRITO -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Tu carrito</h5>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+        ></button>
+      </div>
+      <div class="offcanvas-body d-flex flex-column">
+        <div id="cartItems" class="mb-3">
+          <!-- Items generados por JS -->
+        </div>
+
+        <div class="mt-auto">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong>Total:</strong>
+            <strong id="cartTotal">$0.00</strong>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button
+              id="checkoutBtn"
+              class="btn"
+              style="background: var(--verde-medio); color: white"
+            >
+              Encargar para recoger
+            </button>
+            <button id="reserveFromCart" class="btn btn-outline-secondary">
+              Hacer reserva (mesa)
+            </button>
+            <button id="clearCart" class="btn btn-light">Vaciar carrito</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: LOGIN (simulado) -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Iniciar sesión</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="loginForm">
+              <div class="mb-2">
+                <label class="form-label">Correo electrónico</label>
+                <input
+                  id="loginEmail"
+                  type="email"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Contraseña</label>
+                <input
+                  id="loginPassword"
+                  type="password"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="d-grid">
+                <button
+                  class="btn"
+                  style="background: var(--verde-medio); color: white"
+                >
+                  Entrar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- MODAL: CHECKOUT / ENCARGO PARA RECOGER -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Encargar para recoger</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="orderForm">
+              <div class="mb-2">
+                <label class="form-label">Nombre</label>
+                <input
+                  id="orderName"
+                  type="text"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Teléfono / Correo</label>
+                <input
+                  id="orderContact"
+                  type="text"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Hora aproximada de recogida</label>
+                <input
+                  id="orderPickupTime"
+                  type="time"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Notas / Instrucciones</label>
+                <textarea
+                  id="orderNotes"
+                  class="form-control"
+                  rows="2"
+                ></textarea>
+              </div>
+              <div class="d-grid">
+                <button
+                  class="btn"
+                  style="background: var(--verde-medio); color: white"
+                >
+                  Confirmar pedido
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- MODAL: RESERVAR MESA -->
+    <div class="modal fade" id="reserveModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-calendar-check me-2"></i>Reservar Mesa
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="reserveForm" class="needs-validation" novalidate>
+              <div class="mb-3">
+                <label for="resName" class="form-label">
+                  <i class="bi bi-person me-1"></i>Nombre completo
+                </label>
+                <input
+                  id="resName"
+                  type="text"
+                  class="form-control"
+                  placeholder="Ingresa tu nombre"
+                  required
+                />
+                <div class="invalid-feedback">
+                  Por favor, ingresa tu nombre.
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="resDatetime" class="form-label">
+                  <i class="bi bi-calendar-event me-1"></i>Fecha y hora
+                </label>
+                <div class="input-group">
+                  <input
+                    id="resDatetime"
+                    type="datetime-local"
+                    class="form-control"
+                    min=""
+                    required
+                  />
+                  <span class="input-group-text">
+                    <i class="bi bi-calendar"></i>
+                  </span>
+                </div>
+                <div class="invalid-feedback">
+                  Selecciona una fecha y hora válida.
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="resPeople" class="form-label">
+                  <i class="bi bi-people me-1"></i>Número de personas
+                </label>
+                <input
+                  id="resPeople"
+                  type="number"
+                  min="1"
+                  max="20"
+                  value="2"
+                  class="form-control"
+                  required
+                />
+                <div class="invalid-feedback">
+                  Ingresa el número de personas (mínimo 1).
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="resContact" class="form-label">
+                  <i class="bi bi-telephone me-1"></i>Contacto (teléfono o correo)
+                </label>
+                <input
+                  id="resContact"
+                  type="text"
+                  class="form-control"
+                  placeholder="Teléfono o email"
+                  required
+                />
+                <div class="invalid-feedback">
+                  Ingresa un teléfono o correo válido.
+                </div>
+              </div>
+              <div class="d-grid">
+                <button
+                  id="reserveSubmitBtn"
+                  class="btn btn-success btn-lg"
+                  type="submit"
+                >
+                  <i class="bi bi-send me-2"></i>Enviar reserva
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+     <!-- Modal en el centro -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered"> <!-- ESTA CLASE LO CENTRA -->
+    <div class="modal-content shadow-lg">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">Detalles del Producto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="modalImg" class="img-fluid rounded mb-3" style="max-height:200px; object-fit:cover;">
+        <table class="table table-bordered text-center align-middle">
+          <tbody>
+            <tr>
+              <th>Producto</th>
+              <td id="modalTitle"></td>
+            </tr>
+            <tr>
+              <th>Descripción</th>
+              <td id="modalDesc"></td>
+            </tr>
+            <tr>
+              <th>Precio</th>
+              <td id="modalPrice"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-success" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      
+    </script>
+
+    <!-- Toast Container -->
+    <div
+      class="toast-container position-fixed top-0 end-0 p-3"
+      id="toast-container"
+    ></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="script.js"></script>
+    <script src="login.js"></script>
+  </body>
+</html>
